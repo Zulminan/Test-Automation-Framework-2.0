@@ -28,7 +28,7 @@ public class CsvReaderUtility {
 		
 		try 
 		{
-			cssvfile = new File(System.getProperty("user.dir")+"\\testData\\"+fileName+".csv");
+			cssvfile = new File(System.getProperty("user.dir")+"//testData//"+fileName+".csv");
 			
 			fileReader = new FileReader(cssvfile);
 			

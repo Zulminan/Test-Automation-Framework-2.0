@@ -16,7 +16,7 @@ public class PropertiesUtil {
 		
 		try 
 		{
-			File file = new File(System.getProperty("user.dir")+"\\config\\"+env+".properties");
+			File file = new File(System.getProperty("user.dir")+"//config//"+env+".properties");
 			FileInputStream fis = new FileInputStream(file);
 			prop.load(fis);
 		} 

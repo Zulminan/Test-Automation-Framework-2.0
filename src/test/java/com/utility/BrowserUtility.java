@@ -3,11 +3,15 @@ package com.utility;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -18,6 +22,9 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.constants.*;
 
@@ -26,7 +33,9 @@ public abstract class BrowserUtility {
 	
 	private static ThreadLocal<WebDriver> driver = new ThreadLocal<WebDriver>();
 	
-	Logger logger = LoggerUtility.getLogger(this.getClass());
+	private Logger logger = LoggerUtility.getLogger(this.getClass());
+	
+	private WebDriverWait wait;
 	
 	
 	public WebDriver getDriver()
@@ -39,9 +48,9 @@ public abstract class BrowserUtility {
 	{
 		super();
 		
-	//	this.driver=driver;
-		
 		this.driver.set(driver);
+		
+		wait = new WebDriverWait(getDriver(),Duration.ofSeconds(30L));
 	}
 	
 	public BrowserUtility(String browserName)
@@ -54,6 +63,8 @@ public abstract class BrowserUtility {
 			//driver = new ChromeDriver();
 			
 			driver.set(new ChromeDriver());
+			
+			wait = new WebDriverWait(getDriver(),Duration.ofSeconds(30L));
 		}
 		
 		if(browserName.equalsIgnoreCase("edge"))
@@ -63,6 +74,8 @@ public abstract class BrowserUtility {
 			//driver = new EdgeDriver();
 			
 			driver.set(new EdgeDriver());
+			
+			wait = new WebDriverWait(getDriver(),Duration.ofSeconds(30L));
 		}
 		
 		if(browserName.equalsIgnoreCase("Firefox"))
@@ -71,6 +84,8 @@ public abstract class BrowserUtility {
 			//driver = new ChromeDriver();
 			
 			driver.set(new FirefoxDriver());
+			
+			wait = new WebDriverWait(getDriver(),Duration.ofSeconds(30L));
 		}
 		
 		else
@@ -90,6 +105,8 @@ public abstract class BrowserUtility {
 			//driver = new ChromeDriver();
 			
 			driver.set(new ChromeDriver());
+			
+			wait = new WebDriverWait(getDriver(),Duration.ofSeconds(30L));
 		}
 		
 		else if(browserName==Browser.EDGE)
@@ -97,6 +114,8 @@ public abstract class BrowserUtility {
 			//driver = new EdgeDriver();
 			
 			driver.set(new EdgeDriver());
+			
+			wait = new WebDriverWait(getDriver(),Duration.ofSeconds(30L));
 		}
 		
 		else if(browserName==Browser.FIREFOX)
@@ -104,6 +123,8 @@ public abstract class BrowserUtility {
 			//driver = new EdgeDriver();
 			
 			driver.set(new FirefoxDriver());
+			
+			wait = new WebDriverWait(getDriver(),Duration.ofSeconds(30L));
 		}
 		
 		else
@@ -130,11 +151,15 @@ public abstract class BrowserUtility {
 				chromeOptions.addArguments("--window-size=1920,1080");
 				
 				driver.set(new ChromeDriver(chromeOptions));
+				
+				wait = new WebDriverWait(getDriver(),Duration.ofSeconds(30L));
 			}
 			
 			else
 			{
 				driver.set(new ChromeDriver());
+				
+				wait = new WebDriverWait(getDriver(),Duration.ofSeconds(30L));
 			}
 			
 			
@@ -153,11 +178,15 @@ public abstract class BrowserUtility {
 				edgeOptions.addArguments("disable-gpu");
 				
 				driver.set(new EdgeDriver(edgeOptions));
+				
+				wait = new WebDriverWait(getDriver(),Duration.ofSeconds(30L));
 			}
 			
 			else
 			{
 				driver.set(new EdgeDriver());
+				
+				wait = new WebDriverWait(getDriver(),Duration.ofSeconds(30L));
 			}
 			
 			
@@ -174,11 +203,15 @@ public abstract class BrowserUtility {
 				firefoxOptions.addArguments("--headless");
 				
 				driver.set(new FirefoxDriver(firefoxOptions));
+				
+				wait = new WebDriverWait(getDriver(),Duration.ofSeconds(30L));
 			}
 			
 			else
 			{
 				driver.set(new FirefoxDriver());
+				
+				wait = new WebDriverWait(getDriver(),Duration.ofSeconds(30L));
 			}
 			
 			
@@ -216,11 +249,36 @@ public abstract class BrowserUtility {
 		
         //WebElement webElement = driver.findElement(locator);
 		
-		WebElement webElement = driver.get().findElement(locator);
+		//WebElement webElement = driver.get().findElement(locator);
+		
+		WebElement webElement = wait.until(ExpectedConditions.elementToBeClickable(locator));
         
         logger.info("Element found and now performing click");
 		
         webElement.click();
+	}
+	
+	public void clickOnCheckBox(By locator)
+	{
+		logger.info("Finding element with the locator "+locator);
+		
+        //WebElement webElement = driver.findElement(locator);
+		
+		//WebElement webElement = driver.get().findElement(locator);
+		
+		WebElement webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        
+        logger.info("Element found and now performing click");
+		
+        webElement.click();
+	}
+	
+	public void clickOn(WebElement element)
+	{
+		
+        logger.info("Element found and now performing click");
+		
+        element.click();
 	}
 	
 	
@@ -230,11 +288,59 @@ public abstract class BrowserUtility {
 		
         //WebElement emailAddressTextBoxWebElement = driver.findElement(locator);
 		
-		WebElement emailAddressTextBoxWebElement = driver.get().findElement(locator);
+		//WebElement element = driver.get().findElement(locator);
+		
+		WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
         
         logger.info("Element found and now enter text "+textToEnter);
 		
-		emailAddressTextBoxWebElement.sendKeys(textToEnter);
+        element.sendKeys(textToEnter);
+	}
+	
+	
+	public void clearText(By textBoxLocator)
+	{
+		logger.info("Finding element with the locator "+textBoxLocator);
+		
+		//WebElement element = driver.get().findElement(textBoxLocator);
+		
+		WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(textBoxLocator));
+        
+        logger.info("Element found and clearing the text "+textBoxLocator);
+		
+        element.clear();
+	}
+	
+	
+	public void selectFromDropDown(By dropDownLocator, String optionToSelect)
+	{
+		logger.info("Finding element with the locator "+dropDownLocator);
+		
+		WebElement element = driver.get().findElement(dropDownLocator);
+		
+		Select select = new Select(element);
+		
+		logger.info("Selecting the option "+optionToSelect);
+		
+		select.selectByVisibleText(optionToSelect);
+		
+		
+	}
+	
+	
+	public void enterSpecialKey(By locator, Keys keyToEnter)
+	{
+		logger.info("Finding element with the locator "+locator);
+		
+        //WebElement emailAddressTextBoxWebElement = driver.findElement(locator);
+		
+		//WebElement emailAddressTextBoxWebElement = driver.get().findElement(locator);
+		
+		WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        
+        logger.info("Element found and now enter special key "+keyToEnter);
+		
+        element.sendKeys(keyToEnter);
 	}
 	
 	
@@ -250,6 +356,52 @@ public abstract class BrowserUtility {
 		
 		return element.getText();
 	}
+	
+	public String getVisibleText(WebElement element)
+	{
+		
+		logger.info("Returning the visible text "+element.getText());
+		
+		return element.getText();
+	}
+	
+	
+	
+	public List<String> getAllVisibleText(By locator)
+	{
+		logger.info("Finding all elements with the locator "+locator);
+		
+		//WebElement element = driver.findElement(locator);
+		
+		List<WebElement> elementList = driver.get().findElements(locator);
+		
+		logger.info("Elements found and now printing the list of elements");
+		
+		List<String> visibleTextList = new ArrayList<String>();
+		
+		for(WebElement element : elementList)
+		{
+			visibleTextList.add(getVisibleText(element));
+		}
+		
+		return visibleTextList;
+	}
+	
+	public List<WebElement> getAllElements(By locator)
+	{
+		logger.info("Finding all elements with the locator "+locator);
+		
+		//WebElement element = driver.findElement(locator);
+		
+		List<WebElement> elementList = driver.get().findElements(locator);
+		
+		logger.info("Elements found and now printing the list of elements");
+		
+		
+		return elementList;
+	}
+	
+	
 	
 	public String takeScreenShot(String name)
 	{
@@ -267,7 +419,9 @@ public abstract class BrowserUtility {
 		 
 		 String timeStamp = format.format(date);
 		 
-		 String path = System.getProperty("user.dir")+"//screenshots//"+name+" - "+timeStamp+".png";
+		// String path = System.getProperty("user.dir")+"//screenshots//"+name+" - "+timeStamp+".png";
+		 
+		 String path = "./screenshots/"+name+" - "+timeStamp+".png";
 		 
 		 File screenShotFile = new File(path);
 		 
