@@ -27,7 +27,7 @@ public class LoginDataProvider {
 	
 		try 
 		{
-			File file = new File(System.getProperty("user.dir")+"\\testData\\loginData.json");
+			File file = new File(System.getProperty("user.dir")+"/testData/loginData.json");
 			fileReader = new FileReader(file);
 		} 
 		

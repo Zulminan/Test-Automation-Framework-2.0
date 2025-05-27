@@ -26,7 +26,7 @@ public class ExcelReaderUtility {
 		
 		XSSFSheet xssfSheet =null;
 		
-		File xlsxFile = new File(System.getProperty("user.dir")+"//testData//"+fileName+".xlsx");
+		File xlsxFile = new File(System.getProperty("user.dir")+"/testData/"+fileName+".xlsx");
 		
 		try 
 		{
